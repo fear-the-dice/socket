@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/fear-the-dice/socket/badge.svg)](https://coveralls.io/r/fear-the-dice/socket)
 [![Build Status](https://travis-ci.org/fear-the-dice/socket.svg)](https://travis-ci.org/fear-the-dice/socket)
 [![Dependency Status](https://david-dm.org/fear-the-dice/socket.svg)](https://david-dm.org/fear-the-dice/socket)
 
