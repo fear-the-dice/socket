@@ -1,14 +1,12 @@
 {
-  "name": "lets-kill-things",
-  "version": "1.0.0",
-  "description": "",
+  "name": "fear-the-dice",
+  "version": "0.0.1",
+  "description": "A tool for helping manage combat in a turn based environment.",
   "main": "Gruntfile.js",
   "dependencies": {
     "express": "^4.12.3",
     "lodash": "^3.8.0",
     "socket.io": "^1.3.5"
-  },
-  "devDependencies": {
     "cors": "^2.6.0"
   },
   "scripts": {
@@ -16,12 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/obihann/lets-kill-things.git"
+    "url": "https://github.com/fear-the-dice.socket.git"
   },
-  "author": "",
+  "author": "Jeffrey Hann <jeffhann@gmail.com> (http://jeffreyhann.ca)",
+  "contributors": "Shawn Gillam-wright <s.gillamwright@gmail.com> (http://www.gillamwright.com)",
   "license": "GPL-V2",
   "bugs": {
-    "url": "https://github.com/obihann/lets-kill-things/issues"
+    "url": "https://github.com/fear-the-dice/socket/issues"
   },
-  "homepage": "https://github.com/obihann/lets-kill-things"
+  "homepage": "http://fearthedice.com"
 }
