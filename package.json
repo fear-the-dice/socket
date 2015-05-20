@@ -4,13 +4,17 @@
   "description": "A tool for helping manage combat in a turn based environment.",
   "main": "Gruntfile.js",
   "dependencies": {
+    "cors": "^2.6.0",
     "express": "^4.12.3",
     "lodash": "^3.8.0",
-    "socket.io": "^1.3.5",
-    "cors": "^2.6.0"
+    "socket.io": "^1.3.5"
+  },
+  "devDependencies": {
+    "should": "^6.0.3",
+    "socket.io-client": "^1.3.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test.js"
   },
   "repository": {
     "type": "git",
