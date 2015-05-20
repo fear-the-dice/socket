@@ -59,9 +59,8 @@ io.on('connection', function(socket){
       return monster.id === nMonster.id;
     });
 
-    if(typeof(oMonster) !== undefined) {
-      oMonster.character = nMonster.character;
-      oMonster.name = nMonster.name;
+    if(typeof(oMonster) !== 'undefined') {
+      oMonster.monster = nMonster.monster;
       oMonster.initiative = nMonster.initiative;
       oMonster.hp = nMonster.hp;
       oMonster.health = nMonster.health;
@@ -79,7 +78,7 @@ io.on('connection', function(socket){
       return player.id === nPlayer.id;
     });
 
-    if(typeof(oPlayer) !== undefined) {
+    if(typeof(oPlayer) !== 'undefined') {
       oPlayer.character = nPlayer.character;
       oPlayer.name = nPlayer.name;
       oPlayer.initiative = nPlayer.initiative;
