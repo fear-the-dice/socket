@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/fear-the-dice/socket.svg)](https://travis-ci.org/fear-the-dice/socket)
 [![Dependency Status](https://david-dm.org/fear-the-dice/socket.svg)](https://david-dm.org/fear-the-dice/socket)
 
 #Fear the Dice
