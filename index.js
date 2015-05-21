@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var _ = require('lodash');
 var players = [];
 var monsters = [];
+var port = process.env.PORT || 1347;
 
 app.use(cors());
 
@@ -92,6 +93,6 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(1347, function(){
-  console.log('listening on *:1347');
+http.listen(port, function(){
+  console.log('listening on *:'+port);
 });
