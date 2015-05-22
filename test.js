@@ -105,3 +105,25 @@ describe("Socket Server",function(){
     done();
   });
 });
+
+describe("Socket Server",function(){
+  it('Broadcast when a player or monster is removed', function(done){
+    var client1 = io.connect(socketURL, options);
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+    client2.emit("NewMonster", monster);
+
+    client1.emit("PlayerRemoved", player);
+    client2.emit("MonsterRemoved", monster);
+
+    client1.on('MonsterRemoved', function(data){
+      data.should.equal(monster);
+    });
+
+    client2.on('PlayerRemoved', function(data){
+      data.should.equal(player);
+    });
+    done();
+  });
+});
