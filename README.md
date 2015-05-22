@@ -1,6 +1,11 @@
+[![GitHub tag](https://img.shields.io/github/tag/fear-the-dice/socket.svg)](https://github.com/fear-the-dice/socket/tags)
+[![GitHub issues](https://img.shields.io/github/issues/fear-the-dice/socket.svg)](https://github.com/fear-the-dice/socket/issues)
 [![Coverage Status](https://coveralls.io/repos/fear-the-dice/socket/badge.svg)](https://coveralls.io/r/fear-the-dice/socket)
+[![Codacy Badge](https://www.codacy.com/project/badge/4c683cf114b848b3a6b1e9224e14c05a)](https://www.codacy.com/app/jeffhann/fear-the-dice-socket)
 [![Build Status](https://travis-ci.org/fear-the-dice/socket.svg)](https://travis-ci.org/fear-the-dice/socket)
 [![Dependency Status](https://david-dm.org/fear-the-dice/socket.svg)](https://david-dm.org/fear-the-dice/socket)
+[![node](https://img.shields.io/node/v/gh-badges.svg)](https://nodejs.org/)
+[![GitHub license](https://img.shields.io/github/license/fear-the-dice/socket.svg)]()
 
 #Fear the Dice
 A tool for helping manage combat in a turn based environment. Allowing DM's/GM's to control stats such as AC, HP, and damage taken for a group.

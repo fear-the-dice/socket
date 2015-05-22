@@ -1,23 +1,38 @@
 {
   "name": "fear-the-dice",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A tool for helping manage combat in a turn based environment.",
   "main": "Gruntfile.js",
   "dependencies": {
     "cors": "^2.6.0",
     "express": "^4.12.3",
-    "lodash": "^3.8.0",
+    "lodash": "^4.0.0",
+    "newrelic": "^1.20.2",
     "socket.io": "^1.3.5"
   },
   "devDependencies": {
+    "codacy-coverage": "^2.0.0",
     "coveralls": "^2.11.2",
-    "mocha": "^2.2.5",
-    "mocha-lcov-reporter": "0.0.2",
-    "should": "^6.0.3",
+    "describe": "^1.2.0",
+    "istanbul": "^0.4.4",
+    "mocha": "^3.0.0",
+    "mocha-lcov-reporter": "2.0.0",
+    "npm-run-all": "^2.3.0",
+    "should": "^11.0.0",
     "socket.io-client": "^1.3.5"
   },
   "scripts": {
-    "test": "mocha test.js"
+    "test": "./node_modules/.bin/npm-run-all test:mocha test:coverage report clean:report",
+    "test:mocha": "./node_modules/.bin/mocha test.js",
+    "test:coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
+    "report": "./node_modules/.bin/npm-run-all report:coveralls report:codacy",
+    "report:coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
+    "report:codacy": "cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage",
+    "clean": "npm run clean:report",
+    "clean:report": "rm -rf ./coverage",
+    "start": "node index.js",
+    "docker:build": "docker build -t ftd-socket .",
+    "docker:clean": "docker rmi ftd-socker"
   },
   "repository": {
     "type": "git",

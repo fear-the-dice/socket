@@ -1,7 +1,26 @@
+sudo: required
+
 language: node_js
+
 node_js:
-    - "0.10"
+  - "6"
+
+services:
+  - docker
+
+notifications:
+  email:
+    - jeffhann@gmail.com
+  slack:
+    secure: FXt2QM0fjMJQOUVtkYIwb9KgNYWw19wAiVZfH/Aj4i6ww3zrmnn4UKjH4lfuvcQfqcKniXEJLNvj50DDvk+cqDEkEUrehurVNVqMvBW19jQ/QXnjQ9Q13X9S7bra7s1Cms3D8ZmwQCBEDJKBkrNtzP1AwjJqywZCU+PoYr5oT8vizdYb0ZN8B4NbvjuoMZshxVDNeJ452ILBGGtBZZ9MXwfXeqBMBG+6gW/K6JAzTYksXsxzfJ1jxzQtsYnMTaCwwL1tzYpipa9bYEhRg58/uWOo5FPRDJwSVJ+6fD1rMxlL8nhAUOFO/AWNER2Y8FGZV5azQUhFs9BMqhSCR4EwDwhQEVlDYaqFJkp0q58ZNvB7iMVyRgx1iLxIalcFln+IWVcMHhhuYtdqDsxZNlGUDTJVeVgdtpM+dZe/i9Ubqz63heUws/Lqup69TtcznPz22S2Zf1M1CHTbPHd/dmpz6yT1j2jhHqzDukU4B/ixjxcox2OdqU8fTwL7A9d3PZxVRH0EMKYtvmP7qhsnrWZvWSX4XOc3ZWWCcszXuUorRq4ynkAjtIVXMm9gZo2rxtyq5I9j6pmkkhymAwApwNF5T9BV4BncUZ38ER88k4WbEe4Z/Y6ACF0LMFkR2INEWWis7owdAUMOPWNDPKRSOjFdbLvmkGF2VEluGzRwAT6GUbw=
+
 before_script: 
-- npm install -g mocha
-- npm install -g istanbul
-after_script: istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+  - docker build -t socket .
+  - docker run -d --name socket -p 3500:3500 socket
+
+after_script: 
+  - docker exec socket npm test
+
+notifications:
+  email:
+    - jeffhann@gmail.com 
