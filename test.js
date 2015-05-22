@@ -34,7 +34,7 @@ var player = {
   "damage": 0
 };
 
-describe("Chat Server",function(){
+describe("Socket Server",function(){
   it('Broadcast a list of existing monsters and players to the new user', function(done){
     var client1 = io.connect(socketURL, options);
 
@@ -57,6 +57,49 @@ describe("Chat Server",function(){
 
     client2.on('ExistingPlayers', function(data){
       data.should.equal([player]);
+    });
+
+    done();
+  });
+});
+
+describe("Socket Server",function(){
+  it('Broadcast new monsters and new players to all connected', function(done){
+    var client1 = io.connect(socketURL, options);
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+    client1.emit("NewMonster", monster);
+
+
+    client2.on('NewMonster', function(data){
+      data.should.equal(monster);
+    });
+
+    client2.on('NewPlayer', function(data){
+      data.should.equal(player);
+    });
+
+    done();
+  });
+});
+
+describe("Socket Server",function(){
+  it('Broadcast the player when their turn stars and ends', function(done){
+    var client1 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("StartTurn", player);
+    client2.on('StartTurn', function(data){
+      data.should.equal(player);
+    });
+
+    client1.emit("EndTurn", player);
+    client2.on('EndTurn', function(data){
+      data.should.equal(player);
     });
 
     done();
