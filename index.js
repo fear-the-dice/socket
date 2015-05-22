@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 var _ = require('lodash');
 var players = [];
 var monsters = [];
-var port = process.env.PORT || 1347;
+var port = process.env.SOCKET_PORT || 1347;
 
 app.use(cors());
 
