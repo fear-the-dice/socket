@@ -20,6 +20,12 @@ For our socket server we use Socket.io. When running the server can be accessed 
     ```
     $ node index.js
     ```
+* ***Testing:***
+    > We use [Mocha](http://mochajs.org/) for testing and [Istanbul](https://gotwarlost.github.io/istanbul/) for code coverage. 
+
+    ```
+    $ npm run test
+    ```
 
 ##License
 This tool is protected by the [GNU General Public License v2](http://www.gnu.org/licenses/gpl-2.0.html).

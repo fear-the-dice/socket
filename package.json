@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "describe": "^1.2.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2",
     "should": "^6.0.3",
