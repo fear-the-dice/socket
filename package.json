@@ -4,6 +4,7 @@
   "description": "A tool for helping manage combat in a turn based environment.",
   "main": "Gruntfile.js",
   "dependencies": {
+    "codacy-coverage": "^1.1.2",
     "cors": "^2.6.0",
     "express": "^4.12.3",
     "lodash": "^3.8.0",
