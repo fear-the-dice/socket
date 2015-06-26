@@ -61,12 +61,9 @@ io.on('connection', function(socket){
     });
 
     if(typeof(oMonster) !== 'undefined') {
-      oMonster.monster = nMonster.monster;
-      oMonster.initiative = nMonster.initiative;
-      oMonster.hp = nMonster.hp;
-      oMonster.health = nMonster.health;
-      oMonster.ac = nMonster.ac;
-      oMonster.damage = nMonster.damage;
+      for(var key in nMonster){
+        oMonster[key] = nMonster[key];
+      }
     }
 
     socket.broadcast.emit('MonsterUpdate', msg);
@@ -80,13 +77,9 @@ io.on('connection', function(socket){
     });
 
     if(typeof(oPlayer) !== 'undefined') {
-      oPlayer.character = nPlayer.character;
-      oPlayer.name = nPlayer.name;
-      oPlayer.initiative = nPlayer.initiative;
-      oPlayer.hp = nPlayer.hp;
-      oPlayer.health = nPlayer.health;
-      oPlayer.ac = nPlayer.ac;
-      oPlayer.damage = nPlayer.damage;
+      for(var key in nPlayer){
+        oPlayer[key] = nPlayer[key];
+      }
     }
 
     socket.broadcast.emit('PlayerUpdate', msg);
