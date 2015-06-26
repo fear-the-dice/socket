@@ -1,9 +1,13 @@
+var assert = require('assert');
 var should = require('should');
 var io = require('socket.io-client');
+var server = require('./index.js');
 
 var socketURL = 'http://127.0.0.1:1347';
+var client1, client2;
+var messages = 0;
 
-var options ={
+var options = {
   transports: ['websocket'],
   'force new connection': true
 };
@@ -35,31 +39,174 @@ var player = {
 };
 
 describe("Socket Server",function(){
-  it('Broadcast a list of existing monsters and players to the new user', function(done){
-    var client1 = io.connect(socketURL, options);
+  it('Broadcast an empty list of existing monsters and players.', function(done){
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
 
-    client1.on('ExistingMonsters', function(data){
-      data.should.equal([]);
-    });
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
 
     client1.on('ExistingPlayers', function(data){
-      data.should.equal([]);
+      messages++;
+      assert.equal(data, '[]');
+
+      client1.emit("NewPlayer", JSON.stringify(player));
     });
 
-    client1.emit("NewPlayer", player);
-    client1.emit("NewMonster", monster);
+    client1.on('ExistingMonsters', function(data){
+      messages++;
+      assert.equal(data, '[]');
+      client1.emit("NewMonster", JSON.stringify(monster));
+    });
 
-    var client2 = io.connect(socketURL, options);
+    setTimeout(completeTest, 40);
+  });
+
+  it('Broadcast a list of existing monsters and players to the new user', function(done){
+    messages = 0;
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
+
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
 
     client2.on('ExistingMonsters', function(data){
-      data.should.equal([monster]);
+      messages++;
+      data.should.equal(JSON.stringify([monster]));
     });
 
     client2.on('ExistingPlayers', function(data){
-      data.should.equal([player]);
+      messages++;
+      data.should.equal(JSON.stringify([player]));
     });
 
-    done();
+    setTimeout(completeTest, 40);
+  });
+
+  it('Broadcast when a player or monster is removed', function(done){
+    messages = 0;
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
+
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
+
+    client1.on('MonsterRemoved', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(monster));
+    });
+
+    client1.on('PlayerRemoved', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(player));
+    });
+
+    client2.emit("PlayerRemoved", JSON.stringify(player));
+    client2.emit("MonsterRemoved", JSON.stringify(monster));
+
+    setTimeout(completeTest, 40);
+  });
+
+  it('Broadcast new monsters and new players to all connected', function(done){
+    messages = 0;
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
+
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
+
+    client2.on('NewMonster', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(monster));
+    });
+
+    client2.on('NewPlayer', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(player));
+    });
+
+    client1.emit("NewPlayer", JSON.stringify(player));
+    client1.emit("NewMonster", JSON.stringify(monster));
+
+    setTimeout(completeTest, 40);
+  });
+
+  it('Broadcast the player when their turn stars and ends', function(done){
+    messages = 0;
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
+
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
+
+    client2.on('StartTurn', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(player));
+    });
+
+    client2.on('EndTurn', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(player));
+    });
+
+    client1.emit("StartTurn", JSON.stringify(player));
+    client1.emit("EndTurn", JSON.stringify(player));
+
+    setTimeout(completeTest, 40);
+  });
+
+  it('Broadcast the player and monster on change', function(done){
+    messages = 0;
+    var tests = 2;
+    var completeTest = function(){
+      messages.should.equal(tests);
+      done();
+      client1.disconnect();
+      client2.disconnect();
+    };
+
+    client1 = io.connect(socketURL, options);
+    client2 = io.connect(socketURL, options);
+
+    client2.on('PlayerUpdate', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(player));
+    });
+
+    client2.on('MonsterUpdate', function(data){
+      messages++;
+      data.should.equal(JSON.stringify(monster));
+    });
+
+    client1.emit("PlayerUpdate", JSON.stringify(player));
+    client1.emit("MonsterUpdate", JSON.stringify(monster));
+
+    setTimeout(completeTest, 40);
   });
 });
 
