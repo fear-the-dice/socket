@@ -209,3 +209,68 @@ describe("Socket Server",function(){
     setTimeout(completeTest, 40);
   });
 });
+
+describe("Socket Server",function(){
+  it('Broadcast new monsters and new players to all connected', function(done){
+    var client1 = io.connect(socketURL, options);
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+    client1.emit("NewMonster", monster);
+
+
+    client2.on('NewMonster', function(data){
+      data.should.equal(monster);
+    });
+
+    client2.on('NewPlayer', function(data){
+      data.should.equal(player);
+    });
+
+    done();
+  });
+});
+
+describe("Socket Server",function(){
+  it('Broadcast the player when their turn stars and ends', function(done){
+    var client1 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("StartTurn", player);
+    client2.on('StartTurn', function(data){
+      data.should.equal(player);
+    });
+
+    client1.emit("EndTurn", player);
+    client2.on('EndTurn', function(data){
+      data.should.equal(player);
+    });
+
+    done();
+  });
+});
+
+describe("Socket Server",function(){
+  it('Broadcast when a player or monster is removed', function(done){
+    var client1 = io.connect(socketURL, options);
+    var client2 = io.connect(socketURL, options);
+
+    client1.emit("NewPlayer", player);
+    client2.emit("NewMonster", monster);
+
+    client1.emit("PlayerRemoved", player);
+    client2.emit("MonsterRemoved", monster);
+
+    client1.on('MonsterRemoved', function(data){
+      data.should.equal(monster);
+    });
+
+    client2.on('PlayerRemoved', function(data){
+      data.should.equal(player);
+    });
+    done();
+  });
+});
