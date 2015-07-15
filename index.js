@@ -11,50 +11,52 @@ var port = process.env.PORT || 1347;
 app.use(cors());
 
 io.on('connection', function(socket){
-  socket.emit('ExistingPlayers', JSON.stringify(players));
-  socket.emit('ExistingMonsters', JSON.stringify(monsters));
-
-  socket.on('StartTurn', function(msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('StartTurn', msg);
+  socket.on('Join', function(id, msg){
+    socket.emit('ExistingPlayers', JSON.stringify(players));
+    socket.emit('ExistingMonsters', JSON.stringify(monsters));
   });
 
-  socket.on('EndTurn', function(msg){
+  socket.on('StartTurn', function(id, msg){
     monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('EndTurn', msg);
+    socket.broadcast.to(id).emit('StartTurn', msg);
   });
 
-  socket.on('NewMonster', function(msg){
+  socket.on('EndTurn', function(id, msg){
     monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('NewMonster', msg);
+    socket.broadcast.to(id).emit('EndTurn', msg);
   });
 
-  socket.on('NewPlayer', function(msg){
+  socket.on('NewMonster', function(id, msg){
+    monsters.push(JSON.parse(msg));
+    socket.broadcast.to(id).emit('NewMonster', msg);
+  });
+
+  socket.on('NewPlayer', function(id, msg){
     players.push(JSON.parse(msg));
-    socket.broadcast.emit('NewPlayer', msg);
+    socket.broadcast.to(id).emit('NewPlayer', msg);
   });
 
-  socket.on('MonsterRemoved', function(msg){
+  socket.on('MonsterRemoved', function(id, msg){
     rMonster = JSON.parse(msg);
 
     monsters = _.filter(monsters, function (monster) {
       return rMonster.id !== rMonster.id;
     });
 
-    socket.broadcast.emit('MonsterRemoved', msg);
+    socket.broadcast.to(id).emit('MonsterRemoved', msg);
   });
 
-  socket.on('PlayerRemoved', function(msg){
+  socket.on('PlayerRemoved', function(id, msg){
     rPlayer = JSON.parse(msg);
 
     players = _.filter(players, function (player) {
       return player.id !== rPlayer.id;
     });
 
-    socket.broadcast.emit('PlayerRemoved', msg);
+    socket.broadcast.to(id).emit('PlayerRemoved', msg);
   });
 
-  socket.on('MonsterUpdate', function(msg){
+  socket.on('MonsterUpdate', function(id, msg){
     var nMonster = JSON.parse(msg);
 
     var oMonster = _.find(monsters, function(monster) {
@@ -67,10 +69,10 @@ io.on('connection', function(socket){
       }
     }
 
-    socket.broadcast.emit('MonsterUpdate', msg);
+    socket.broadcast.to(id).emit('MonsterUpdate', msg);
   });
 
-  socket.on('PlayerUpdate', function(msg){
+  socket.on('PlayerUpdate', function(id, msg){
     var nPlayer = JSON.parse(msg);
 
     var oPlayer = _.find(players, function(player) {
@@ -83,7 +85,7 @@ io.on('connection', function(socket){
       }
     }
 
-    socket.broadcast.emit('PlayerUpdate', msg);
+    socket.broadcast.to(id).emit('PlayerUpdate', msg);
   });
 });
 
