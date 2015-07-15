@@ -1,4 +1,3 @@
-require('newrelic');
 var app = require('express')();
 var cors = require('cors');
 var http = require('http').Server(app);
