@@ -3,62 +3,86 @@ var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var _ = require('lodash');
-var players = [];
-var monsters = [];
+var rooms = [];
 var port = process.env.PORT || 1347;
 
 app.use(cors());
 
 io.on('connection', function(socket){
-  socket.on('Join', function(id, msg){
-    socket.emit('ExistingPlayers', JSON.stringify(players));
-    socket.emit('ExistingMonsters', JSON.stringify(monsters));
+  socket.on('Join', function(msg){
+    console.log("socket joining %s", msg);
+    if (msg === null) {
+      msg = "default";
+    }
+
+    socket.join(msg);
+    socket.room = msg;
+    var roomObj = rooms[socket.room];
+
+    if (typeof roomObj === 'undefined') {
+      rooms[socket.room] = {
+        players: [],
+        monsters: []
+      };
+
+      roomObj = rooms[socket.room];
+    }
+
+    socket.emit('ExistingPlayers', JSON.stringify(roomObj.players));
+    socket.emit('ExistingMonsters', JSON.stringify(roomObj.monsters));
   });
 
-  socket.on('StartTurn', function(id, msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.to(id).emit('StartTurn', msg);
+  socket.on('StartTurn', function(msg){
+    var roomObj = rooms[socket.room];
+    roomObj.monsters.push(JSON.parse(msg));
+    socket.broadcast.to(socket.room).emit('StartTurn', msg);
   });
 
-  socket.on('EndTurn', function(id, msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.to(id).emit('EndTurn', msg);
+  socket.on('EndTurn', function(msg){
+    var roomObj = rooms[socket.room];
+    roomObj.monsters.push(JSON.parse(msg));
+    socket.broadcast.to(socket.room).emit('EndTurn', msg);
   });
 
-  socket.on('NewMonster', function(id, msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.to(id).emit('NewMonster', msg);
+  socket.on('NewMonster', function(msg){
+    var roomObj = rooms[socket.room];
+    roomObj.monsters.push(JSON.parse(msg));
+    socket.broadcast.to(socket.room).emit('NewMonster', msg);
   });
 
-  socket.on('NewPlayer', function(id, msg){
-    players.push(JSON.parse(msg));
-    socket.broadcast.to(id).emit('NewPlayer', msg);
+  socket.on('NewPlayer', function(msg){
+    var roomObj = rooms[socket.room];
+    roomObj.players.push(JSON.parse(msg));
+    socket.broadcast.to(socket.room).emit('NewPlayer', msg);
   });
 
-  socket.on('MonsterRemoved', function(id, msg){
+  socket.on('MonsterRemoved', function(msg){
+    var roomObj = rooms[socket.room];
     rMonster = JSON.parse(msg);
 
-    monsters = _.filter(monsters, function (monster) {
+    roomObj.monsters = _.filter(roomObj.monsters, function (monster) {
       return rMonster.id !== rMonster.id;
     });
 
-    socket.broadcast.to(id).emit('MonsterRemoved', msg);
+    socket.broadcast.to(socket.room).emit('MonsterRemoved', msg);
   });
 
-  socket.on('PlayerRemoved', function(id, msg){
+  socket.on('PlayerRemoved', function(msg){
+    var roomObj = rooms[socket.room];
     rPlayer = JSON.parse(msg);
 
-    players = _.filter(players, function (player) {
+    roomObj.players = _.filter(roomObj.players, function (player) {
       return player.id !== rPlayer.id;
     });
 
-    socket.broadcast.to(id).emit('PlayerRemoved', msg);
+    socket.broadcast.to(socket.room).emit('PlayerRemoved', msg);
   });
 
-  socket.on('MonsterUpdate', function(id, msg){
+  socket.on('MonsterUpdate', function(msg){
+    var roomObj = rooms[socket.room];
     var nMonster = JSON.parse(msg);
 
-    var oMonster = _.find(monsters, function(monster) {
+    var oMonster = _.find(roomObj.monsters, function(monster) {
       return monster.id === nMonster.id;
     });
 
@@ -68,13 +92,14 @@ io.on('connection', function(socket){
       }
     }
 
-    socket.broadcast.to(id).emit('MonsterUpdate', msg);
+    socket.broadcast.to(socket.room).emit('MonsterUpdate', msg);
   });
 
-  socket.on('PlayerUpdate', function(id, msg){
+  socket.on('PlayerUpdate', function(msg){
+    var roomObj = rooms[socket.room];
     var nPlayer = JSON.parse(msg);
 
-    var oPlayer = _.find(players, function(player) {
+    var oPlayer = _.find(roomObj.players, function(player) {
       return player.id === nPlayer.id;
     });
 
@@ -84,7 +109,7 @@ io.on('connection', function(socket){
       }
     }
 
-    socket.broadcast.to(id).emit('PlayerUpdate', msg);
+    socket.broadcast.to(socket.room).emit('PlayerUpdate', msg);
   });
 });
 
