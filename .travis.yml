@@ -16,7 +16,6 @@ notifications:
 
 before_script:
   - docker build -t socket .
-  - docker run -d --name socket -p 3500:3500 socket
 
 after_script:
-  - docker exec socket npm test
+  - docker run -i socket npm test
