@@ -1,0 +1,14 @@
+.DS_Store
+.lvimrc
+
+.git/
+coverage/
+node_modules/
+bower_components/
+public/
+.sass-cache/
+logs/
+tmp/
+
+LICENSE
+*.md

@@ -1,92 +1,99 @@
-require('newrelic');
-var app = require('express')();
-var cors = require('cors');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var _ = require('lodash');
-var players = [];
-var monsters = [];
-var port = process.env.PORT || 1347;
+'use strict';
+
+let app = require('express')();
+let cors = require('cors');
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
+let _ = require('lodash');
+let players = [];
+let monsters = [];
+let port = process.env.PORT || 1347;
 
 app.use(cors());
 
-io.on('connection', function(socket){
-  socket.emit('ExistingPlayers', JSON.stringify(players));
-  socket.emit('ExistingMonsters', JSON.stringify(monsters));
+io.on('connection', socket => {
+    socket.emit('ExistingPlayers', JSON.stringify(players));
+    socket.emit('ExistingMonsters', JSON.stringify(monsters));
 
-  socket.on('StartTurn', function(msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('StartTurn', msg);
-  });
-
-  socket.on('EndTurn', function(msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('EndTurn', msg);
-  });
-
-  socket.on('NewMonster', function(msg){
-    monsters.push(JSON.parse(msg));
-    socket.broadcast.emit('NewMonster', msg);
-  });
-
-  socket.on('NewPlayer', function(msg){
-    players.push(JSON.parse(msg));
-    socket.broadcast.emit('NewPlayer', msg);
-  });
-
-  socket.on('MonsterRemoved', function(msg){
-    rMonster = JSON.parse(msg);
-
-    monsters = _.filter(monsters, function (monster) {
-      return rMonster.id !== rMonster.id;
+    socket.on('StartTurn', msg => {
+        monsters.push(msg);
+        socket.broadcast.emit('StartTurn', msg);
     });
 
-    socket.broadcast.emit('MonsterRemoved', msg);
-  });
-
-  socket.on('PlayerRemoved', function(msg){
-    rPlayer = JSON.parse(msg);
-
-    players = _.filter(players, function (player) {
-      return player.id !== rPlayer.id;
+    socket.on('EndTurn', msg => {
+        monsters.push(msg);
+        socket.broadcast.emit('EndTurn', msg);
     });
 
-    socket.broadcast.emit('PlayerRemoved', msg);
-  });
-
-  socket.on('MonsterUpdate', function(msg){
-    var nMonster = JSON.parse(msg);
-
-    var oMonster = _.find(monsters, function(monster) {
-      return monster.id === nMonster.id;
+    socket.on('NewMonster', msg => {
+        msg = JSON.parse(msg);
+        monsters.push(msg);
+        socket.broadcast.emit('NewMonster', JSON.stringify(msg));
     });
 
-    if(typeof(oMonster) !== 'undefined') {
-      for(var key in nMonster){
-        oMonster[key] = nMonster[key];
-      }
-    }
-
-    socket.broadcast.emit('MonsterUpdate', msg);
-  });
-
-  socket.on('PlayerUpdate', function(msg){
-    var nPlayer = JSON.parse(msg);
-
-    var oPlayer = _.find(players, function(player) {
-      return player.id === nPlayer.id;
+    socket.on('NewPlayer', msg => {
+        msg = JSON.parse(msg);
+        players.push(msg);
+        socket.broadcast.emit('NewPlayer', JSON.stringify(msg));
     });
 
-    if(typeof(oPlayer) !== 'undefined') {
-      for(var key in nPlayer){
-        oPlayer[key] = nPlayer[key];
-      }
-    }
+    socket.on('MonsterRemoved', msg => {
+        let rMonster = JSON.parse(msg);
 
-    socket.broadcast.emit('PlayerUpdate', msg);
-  });
+        monsters = _.filter(monsters, monster =>  {
+            return rMonster.id !== monster.id;
+        });
+
+        socket.broadcast.emit('MonsterRemoved', msg);
+    });
+
+    socket.on('PlayerRemoved', msg => {
+        let rPlayer = JSON.parse(msg);
+
+        players = _.filter(players, player => {
+            return player.id !== rPlayer.id;
+        });
+
+        socket.broadcast.emit('PlayerRemoved', msg);
+    });
+
+    socket.on('MonsterUpdate', msg => {
+        let key, nMonster, oMonster;
+
+        nMonster = JSON.parse(msg);
+
+        oMonster = _.find(monsters, monster =>  {
+            return monster.id === nMonster.id;
+        });
+
+        if (typeof oMonster !== 'undefined') {
+            for (key in nMonster) {
+                oMonster[key] = nMonster[key];
+            }
+        }
+
+        socket.broadcast.emit('MonsterUpdate', msg);
+    });
+
+    socket.on('PlayerUpdate', msg => {
+        let key, nPlayer, oPlayer;
+
+        nPlayer = JSON.parse(msg);
+
+        oPlayer = _.find(players, player => {
+            return player.id === nPlayer.id;
+        });
+
+        if(typeof oPlayer !== 'undefined') {
+            for (key in nPlayer) {
+                oPlayer[key] = nPlayer[key];
+            }
+        }
+
+        socket.broadcast.emit('PlayerUpdate', msg);
+    });
 });
 
-http.listen(port, function(){
-  console.log('listening on *:'+port);
+http.listen(port, () => {
+    console.log('listening on *:'+port);
 });
