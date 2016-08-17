@@ -1,5 +1,7 @@
 'use strict';
 
+require('newrelic');
+
 let app = require('express')();
 let cors = require('cors');
 let http = require('http').Server(app);
