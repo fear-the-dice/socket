@@ -951,7 +951,7 @@
     },
     "newrelic": {
       "version": "1.29.0",
-      "from": "newrelic@>=1.20.2 <2.0.0",
+      "from": "https://registry.npmjs.org/newrelic/-/newrelic-1.29.0.tgz",
       "resolved": "https://registry.npmjs.org/newrelic/-/newrelic-1.29.0.tgz",
       "dependencies": {
         "concat-stream": {
